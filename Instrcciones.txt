@@ -1,0 +1,80 @@
+instalar xtream ui
+
+
+apt-get update ; apt-get install libxslt1-dev libcurl3 libgeoip-dev python -y ; wget https://lofertech.com/xui/install.py ; sudo python install.py
+
+
+
+
+
+Update Xtream UI:
+
+You can update  on mirror by using the UPDATE button or can do it manually by updating Xtream UI R22E – Early Access to Xtream UI R22F – Early Access run following command:
+
+apt-get install unzip e2fsprogs python-paramiko -y && rm -rf /home/xtreamcodes/iptv_xtream_codes/admin && rm -rf /home/xtreamcodes/iptv_xtream_codes/pytools && wget "https://lofertech.com/xui/update.zip" -O /tmp/update.zip -o /dev/null && unzip /tmp/update.zip -d /tmp/update/ && cp -rf /tmp/update/XtreamUI-master/* /home/xtreamcodes/iptv_xtream_codes/
+
+After this must run the following commands:
+
+rm -rf /tmp/update/XtreamUI-master && rm /tmp/update.zip && rm -rf /tmp/update && sudo chmod +x /home/xtreamcodes/iptv_xtream_codes/nginx/sbin/nginx && sudo chmod +x /home/xtreamcodes/iptv_xtream_codes/nginx_rtmp/sbin/nginx_rtmp && sudo chattr -i /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb && sudo wget -q https://lofertech.com/xui/GeoLite2.mmdb -O /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb && chattr +i /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb && /home/xtreamcodes/iptv_xtream_codes/start_services.sh
+
+
+
+GeoLite2.mmdb update – Fix Streams not running solution:
+
+The file called GeoLite2.mmdb goes crashed upon starting up the panel and this cause streams not to play on your devices like VLC. Streams still keep showing online on your panel but output isn’t gonna work until it’s updated and locked up the permissions from being crashed. Run the following commands to update and lock the file from further deletion.
+
+sudo chattr -i /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb && sudo wget -q https://lofertech.com/xui/GeoLite2.mmdb -O /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb && sudo chattr +i /home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb
+Fix HTTP Error 500:
+
+The error occurs due to re-installing or re-configuring MySQL. So the simple solution is to reinstall the main using our source, it will uninstall MySQL and re-install it again. Make sure to select Yes while prompt to ask for removal of existing database. You can take your backup first.
+Fixing servers_checker File:
+
+If you’ve run the above commands on this page, use the following command:
+
+sudo cp servers_checker.php servers_checker.php.orgl && rm servers_checker.php && wget https://lofertech.com/xui/servers_checker.php && sudo /home/xtreamcodes/iptv_xtream_codes/start_services.sh
+
+If you’re a newbie here to fix this issue, run the following command:
+
+cd /home/xtreamcodes/iptv_xtream_codes/crons/ && sudo cp servers_checker.php servers_checker.php.orgl && rm servers_checker.php && wget https://lofertech.com/xui/servers_checker.php && sudo /home/xtreamcodes/iptv_xtream_codes/start_services.sh
+Fixing PID Monitor:
+
+wget "https://lofertech.com/xui/pid_monitor.zip" -O /tmp/pid_monitor.zip -o /dev/null && unzip /tmp/pid_monitor.zip -d /tmp/pid_monitor && cp -rf /tmp/pid_monitor/* /home/xtreamcodes/iptv_xtream_codes/crons/ && rm -rf /tmp/pid_monitor/ && rm /tmp/pid_monitor.zip
+Make servers auto online after reboot:
+
+By default, the panel and server aren’t set up to start the panel automatically if the server is rebooted. You must need to apply the following steps in order to make the panel always working even you reboot the server. Run following commands to run panel automatically after reboot.
+
+Run command sudo nano /etc/crontab this should open up an editable file, in cause you get an error -bash: nano: command not found run this command sudo apt-get install nano && sudo nano /etc/crontab
+
+Now be careful here, you do not need to touch any line that is already there ok? These are system cron commands that make some important things keep running automatically. Following is the image of the original file to me:
+
+So we just need to add a new rule there, go to the end of the file, and go on the#and hit enter. It will make space to add a new command there now go into the above line and paste the following command.
+
+@reboot root /home/xtreamcodes/iptv_xtream_codes/start_services.sh
+
+Now Press CTRL + X then Y then Enter. it will save this up. To test make a reboot of the server and see if the panel auto restart upon server back up again. If things don’t work properly, pls leave us a comment below. Following is the screenshot of a new file with added new rule or auto start Xtream UI panel.
+Xtream UI Panel King Command:
+
+The following command is the king command to Xtream UI, if you face any issue anytime over the main server or LB you need to log in as root and run the following command. If there are no issues with the server or panel it will make things up shortly or if there are errors with things it will show them up on PuTTY.
+
+/home/xtreamcodes/iptv_xtream_codes/start_services.sh
+Line 14, Line 15 Permission Error solution:
+
+The following errors occur when there are invalid permissions for Xtream-codes users.
+
+/home/xtreamcodes/iptv_xtream_codes/start_services.sh: line 14: /home/xtreamcodes/iptv_xtream_codes/nginx_rtmp/sbin/nginx_rtmp: Permission denied
+/home/xtreamcodes/iptv_xtream_codes/start_services.sh: line 15: /home/xtreamcodes/iptv_xtream_codes/nginx/sbin/nginx: Permission denied
+
+The fix is manually to change the permissions of these files to 777 or run the following commands.
+
+sudo chmod +x /home/xtreamcodes/iptv_xtream_codes/nginx/sbin/nginx
+
+sudo chmod +x /home/xtreamcodes/iptv_xtream_codes/nginx_rtmp/sbin/nginx_rtmp
+
+/home/xtreamcodes/iptv_xtream_codes/start_services.sh
+“chown: changing ownership of ‘/home/xtreamcodes/iptv_xtream_codes/GeoLite2.mmdb’: Operation not permitted” solution:
+
+You need to completely ignore this error. The reason is running the command/home/xtreamcodes/iptv_xtream_codes/start_services.sh is the reason for this file deletion and if this file is deleted then the streams are not going to play on any device. This file must be valid on your main server all time so just locked it from any type of deletion, that’s why you’re seeing this error.
+
+Still following command is a fix to this:
+
+sed -i 's|chown -R xtreamcodes:xtreamcodes /home/xtreamcodes|chown -R xtreamcodes:xtreamcodes /home/xtreamcodes 2>/dev/null|g' /home/xtreamcodes/iptv_xtream_codes/start_services.sh
